@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-
+import TrendChart from "./components/TrendChart/TrendChart";
 function App() {
   return (
     <div className="app">
@@ -8,7 +8,7 @@ function App() {
       {/* Header  */}
         <div className="flex">
           <div className="column-charts">
-            {/* trendChart  */}
+            <TrendChart />
             {/* GaugeChart  */}
           </div>
           <div className="column-charts">
