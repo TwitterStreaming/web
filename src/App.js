@@ -3,6 +3,7 @@ import "./App.css";
 import Map from "./components/Map/Map";
 import TrendChart from "./components/TrendChart/TrendChart";
 import Header from "./components/Header/Header";
+import SentimentGaugeChart from "./components/SentimentGaugeChart/SentimentGaugeChart";
 function App() {
     return (
         <div className="app">
@@ -11,7 +12,7 @@ function App() {
                 <div className="flex">
                     <div className="column-charts">
                         <TrendChart />
-                        {/* GaugeChart  */}
+                        <SentimentGaugeChart/>
                     </div>
                     <div className="column-charts">
                         <Map />
