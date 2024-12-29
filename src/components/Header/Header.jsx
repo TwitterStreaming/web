@@ -1,17 +1,27 @@
 // @ts-check
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../styles/Header.css";
 import profilePic from "../../Assets/money.png";
 import { FaSearch } from "react-icons/fa";
-import { searchByKeyword } from "../../data/database_caller";
+import { useSearchByKeyword } from "../../context/useSearchByKeyword";
+import { useLocation } from "../../context/useLocation";
 
-const Header = ({ updateSearchedData }) => {
+const Header = () => {
     const [searchText, setSearchText] = useState("");
-    async function search() {
+    const { data, fetch: fetchSearchData } = useSearchByKeyword();
+    const { locations, fetch: fetchLocations } = useLocation();
+
+    async function searchKeyword() {
         if (searchText !== "") {
-            updateSearchedData(await searchByKeyword(searchText));
+            await fetchSearchData(searchText);
         }
     }
+
+    useEffect(() => {
+        if (data) {
+            fetchLocations(data);
+        }
+    }, [data, locations]);
 
     return (
         <header className="header">
@@ -26,7 +36,10 @@ const Header = ({ updateSearchedData }) => {
                             type="text"
                             placeholder="Search"
                         />
-                        <FaSearch onClick={search} className="search-icon" />
+                        <FaSearch
+                            onClick={searchKeyword}
+                            className="search-icon"
+                        />
                     </div>
                     <div className="profile-pic">
                         <img src={profilePic} alt="Profile" />

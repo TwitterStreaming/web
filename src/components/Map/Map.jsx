@@ -13,12 +13,15 @@ import "leaflet-defaulticon-compatibility";
 import IconMap from "../../Assets/map-icon.png";
 import IconMapActive from "../../Assets/active-map-icon.png";
 import "../../styles/Map.css";
+import { useLocation } from "../../context/useLocation";
 
 /**
  * @typedef {"roadmap" | "satellite" | "hybrid" | "terrain"} MapTypes
  */
 
-const Map = memo(({ locations }) => {
+const Map = memo(() => {
+    const { locations } = useLocation();
+
     /**
      * @type {[MapTypes, React.Dispatch<React.SetStateAction<MapTypes>>]}
      */
