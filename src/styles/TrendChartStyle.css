@@ -5,68 +5,67 @@
     color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
-  }
-  
-  .overview h2 {
+}
+
+.overview h2 {
     margin-bottom: 10px;
     font-size: 20px;
     font-weight: 600;
-  }
-  
-  .overview-content {
+}
+
+.overview-content {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-  }
-  
-  .stats {
+}
+
+.stats {
     display: flex;
     flex-direction: column;
     gap: 10px;
     width: 20%;
-  }
-  
-  .stat {
+}
+
+.stat {
     background-color: rgba(255, 255, 255, 0.2);
     padding: 10px;
     border-radius: 8px;
     text-align: left;
-  }
-  
-  .stat h3 {
+}
+
+.stat h3 {
     margin-bottom: 5px;
     font-size: 16px;
     font-weight: 600;
-  }
-  
-  .stat .progress-bar {
+}
+
+.stat .progress-bar {
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: 5px;
     overflow: hidden;
     margin-bottom: 5px;
     height: 8px;
-  }
-  
-  .stat .progress {
+}
+
+.stat .progress {
     height: 100%;
     background-color: #fff;
-  }
-  
-  .stat .details {
+}
+
+.stat .details {
     display: flex;
     justify-content: space-between;
     font-size: 12px;
     color: #252422;
-  }
-  
-  .chart {
+}
+
+.chart {
     flex: 1;
     height: 250px;
     width: 50%;
     margin-left: 1rem;
-  }
-  
-  .chart canvas {
+}
+
+.chart canvas {
     border-radius: 8px;
-  }
-  
+}
