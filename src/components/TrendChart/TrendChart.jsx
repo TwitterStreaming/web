@@ -22,13 +22,13 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    Filler
+    Filler,
 );
 
 const Overview = () => {
-    const { trends, isSet } = useTrends();
+    const { trends } = useTrends();
 
-    const [isDaily, setIsDaily] = useState(true); // State to toggle between daily and hourly
+    const [isDaily, setIsDaily] = useState(true); 
     const [data, setData] = useState({
         labels: [],
         datasets: [
@@ -46,17 +46,17 @@ const Overview = () => {
             },
         ],
     });
-
     useEffect(() => {
         async function getData() {
             const trendsData = trends.trends;
 
-            const hourlyTweetCounts = new Array(24).fill(0); // 24 hours in a day
+            const hourlyTweetCounts = new Array(24).fill(0);
             const dailyTweetCounts = [];
             const days = [];
 
             trendsData.forEach((trend) => {
                 const date = new Date(trend.date);
+                console.log(trend);
 
                 // Group by hour
                 const hour = date.getUTCHours();
@@ -75,7 +75,6 @@ const Overview = () => {
                 }
             });
 
-            // Update the data based on isDaily state
             if (isDaily) {
                 setData({
                     labels: days.length > 0 ? days : ["No Data"],
@@ -114,10 +113,11 @@ const Overview = () => {
                 });
             }
         }
-        if (isSet) {
+
+        if (trends) {
             getData();
         }
-    }, [isSet, isDaily]);
+    }, [trends]);
 
     const toggleView = () => setIsDaily((prev) => !prev);
 

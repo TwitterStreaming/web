@@ -11,7 +11,7 @@ const Header = () => {
     const [searchText, setSearchText] = useState("");
     const { data, fetch: fetchSearchData } = useSearchByKeyword();
     const { fetch: fetchLocations } = useLocation();
-    const { fetch: fetchTrends} = useTrends();
+    const { fetch: fetchTrends } = useTrends();
 
     async function searchKeyword() {
         if (searchText !== "") {
