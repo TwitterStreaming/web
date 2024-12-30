@@ -15,7 +15,7 @@ export type Sentiment = {
 
 export type TweetSource = {
     text: string;
-    location: Location;
+    geo_coordinates: Location;
     created_at: string;
     hashtags: string[];
     sentiment: Sentiment;

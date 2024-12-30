@@ -9,7 +9,7 @@ import { useLocation } from "../../context/useLocation";
 const Header = () => {
     const [searchText, setSearchText] = useState("");
     const { data, fetch: fetchSearchData } = useSearchByKeyword();
-    const { locations, fetch: fetchLocations } = useLocation();
+    const { fetch: fetchLocations } = useLocation();
 
     async function searchKeyword() {
         if (searchText !== "") {
@@ -18,10 +18,18 @@ const Header = () => {
     }
 
     useEffect(() => {
+        const intervalId = setInterval(async () => {
+            await searchKeyword();
+        }, 2000);
+
+        return () => clearInterval(intervalId);
+    }, [searchText]);
+
+    useEffect(() => {
         if (data) {
             fetchLocations(data);
         }
-    }, [data, locations]);
+    }, [data]);
 
     return (
         <header className="header">

@@ -60,8 +60,11 @@ const Map = memo(() => {
 
     const renderMarks = () => {
         return locations.map((location, index) => {
-            if (!location.lat || !location.lon) {
-                console.warn(`Invalid location at index ${index}:`, location);
+            if (
+                !location ||
+                typeof location.lat !== "number" ||
+                typeof location.lon !== "number"
+            ) {
                 return null;
             }
 
