@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import {
     MapContainer,
     TileLayer,
@@ -13,31 +13,28 @@ import "leaflet-defaulticon-compatibility";
 import IconMap from "../../Assets/map-icon.png";
 import IconMapActive from "../../Assets/active-map-icon.png";
 import "../../styles/Map.css";
+import { useLocation } from "../../context/useLocation";
 
 /**
  * @typedef {"roadmap" | "satellite" | "hybrid" | "terrain"} MapTypes
- * @typedef {{ id: string, lat: number, lng: number, text: string }} MockTweet
  */
 
 const Map = memo(() => {
+    const { locations } = useLocation();
+
     /**
      * @type {[MapTypes, React.Dispatch<React.SetStateAction<MapTypes>>]}
      */
     const [mapType, setMapType] = useState("roadmap");
     /**
-     * @type {[MockTweet, React.Dispatch<React.SetStateAction<MockTweet | null>>]}
+     * @type {[
+         import("../../data/database_caller").Location,
+         React.Dispatch<React.SetStateAction<import("../../data/database_caller").Location | null>>
+     ]}
      */
-    const [hoveredTweet, setHoveredTweet] = useState(null);
+    const [hoveredLocation, setHoveredLocation] = useState(null);
 
-    /**
-     * @type {MockTweet[]}
-     */
-    const mockTweets = [
-        { id: "1", lat: 40.7128, lng: -74.006, text: "Hello from NYC!" },
-        { id: "2", lat: 34.0522, lng: -118.2437, text: "Greetings from LA!" },
-        { id: "3", lat: 51.5074, lng: -0.1278, text: "Cheers from London!" },
-        { id: "4", lat: 48.8566, lng: 2.3522, text: "Bonjour from Paris!" },
-    ];
+    const mapRef = useRef(null);
 
     const getUrl = () => {
         /** @type {Record<MapTypes, string>} */
@@ -62,35 +59,59 @@ const Map = memo(() => {
     });
 
     const renderMarks = () => {
-        return mockTweets.map((tweet) => (
-            <Marker
-                key={tweet.id}
-                icon={
-                    hoveredTweet?.id === tweet.id
-                        ? mapMarkActiveIcon
-                        : mapMarkIcon
-                }
-                position={{ lat: tweet.lat, lng: tweet.lng }}
-                eventHandlers={{
-                    mouseover: () => {
-                        setHoveredTweet(tweet);
-                    },
-                    mouseout: () => {
-                        setHoveredTweet(null);
-                    },
-                }}
-            >
-                <Tooltip direction="top" offset={[0, -15]} opacity={1}>
-                    <div className="custom-tooltip">
-                        <strong>Message:</strong> {tweet.text}
-                        <br />
-                        <strong>Location:</strong> {tweet.lat.toFixed(2)},{" "}
-                        {tweet.lng.toFixed(2)}
-                    </div>
-                </Tooltip>
-            </Marker>
-        ));
+        return locations.map((location, index) => {
+            if (
+                !location ||
+                typeof location.lat !== "number" ||
+                typeof location.lon !== "number"
+            ) {
+                return null;
+            }
+
+            return (
+                <Marker
+                    key={index}
+                    icon={
+                        hoveredLocation?.lat === location.lat &&
+                        hoveredLocation?.lon === location.lon
+                            ? mapMarkActiveIcon
+                            : mapMarkIcon
+                    }
+                    position={{ lat: location.lat, lng: location.lon }}
+                    eventHandlers={{
+                        mouseover: () => {
+                            setHoveredLocation(location);
+                        },
+                        mouseout: () => {
+                            setHoveredLocation(null);
+                        },
+                    }}
+                >
+                    <Tooltip direction="top" offset={[0, -15]} opacity={1}>
+                        <div className="custom-tooltip">
+                            <strong>Location:</strong>{" "}
+                            {location?.lat.toFixed(2)},{" "}
+                            {location?.lon.toFixed(2)}
+                        </div>
+                    </Tooltip>
+                </Marker>
+            );
+        });
     };
+
+    useEffect(() => {
+        if (locations.length > 0 && mapRef.current) {
+            const randomLocation =
+                locations[Math.floor(Math.random() * locations.length)];
+
+            if (mapRef.current) {
+                mapRef.current.flyTo(
+                    { lat: randomLocation.lat, lng: randomLocation.lon },
+                    5,
+                );
+            }
+        }
+    }, [locations]);
 
     return (
         <>
