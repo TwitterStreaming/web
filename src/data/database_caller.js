@@ -48,3 +48,13 @@ export async function getAllTweets() {
         console.error("Error fetching data:", error);
     }
 }
+
+/** @returns {import("./database_caller").TrendsResponse} */
+export async function getTrendsTweetsOverTime(query) {
+    try {
+        const res = await axios.get(`http://127.0.0.1:8000/api/trends/?q=${query}`);
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}

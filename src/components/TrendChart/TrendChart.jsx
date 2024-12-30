@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Line } from 'react-chartjs-2';
+import React, { useState, useEffect } from "react";
+import { Line } from "react-chartjs-2";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -10,58 +10,116 @@ import {
     Tooltip,
     Legend,
     Filler,
-} from 'chart.js';
-import '../../styles/TrendChartStyle.css';
+} from "chart.js";
+import "../../styles/TrendChartStyle.css";
+import { useTrends } from "../../context/useTrends";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+);
 
 const Overview = () => {
+    const { trends, isSet } = useTrends();
+
+    const [isDaily, setIsDaily] = useState(true); // State to toggle between daily and hourly
     const [data, setData] = useState({
         labels: [],
         datasets: [
             {
-                label: 'Tweets Over Time',
+                label: "Tweets Over Time",
                 data: [],
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: '#4bc0c0',
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                borderColor: "#4bc0c0",
                 borderWidth: 2,
-                pointBackgroundColor: '#4bc0c0',
-                pointBorderColor: '#fff',
-                pointHoverBackgroundColor: '#4bc0c0',
-                pointHoverBorderColor: '#fff',
+                pointBackgroundColor: "#4bc0c0",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#4bc0c0",
+                pointHoverBorderColor: "#fff",
                 fill: true,
             },
         ],
     });
 
     useEffect(() => {
-        // Mock API data for tweets
-        const mockApiData = {
-            hours: ['0h', '1h', '2h', '3h', '4h', '5h', '6h', '7h', '8h', '9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h', '19h', '20h', '21h', '22h', '23h'],
-            hourlyTweetCounts: [15, 20, 18, 25, 30, 10, 5, 8, 40, 50, 45, 60, 80, 70, 55, 65, 75, 90, 85, 60, 50, 30, 20, 10],
-            dailyTweetCounts: [120, 135, 150, 110, 180, 190, 200],
-            days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        };
+        async function getData() {
+            const trendsData = trends.trends;
 
-        // Aggregation: Switch between hourly and daily data (hourly by default)
-        setData({
-            labels: mockApiData.hours,
-            datasets: [
-                {
-                    label: 'Hourly Tweets',
-                    data: mockApiData.hourlyTweetCounts,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: '#4bc0c0',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#4bc0c0',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#4bc0c0',
-                    pointHoverBorderColor: '#fff',
-                    fill: true,
-                },
-            ],
-        });
-    }, []);
+            const hourlyTweetCounts = new Array(24).fill(0); // 24 hours in a day
+            const dailyTweetCounts = [];
+            const days = [];
+
+            trendsData.forEach((trend) => {
+                const date = new Date(trend.date);
+
+                // Group by hour
+                const hour = date.getUTCHours();
+                hourlyTweetCounts[hour] += trend.count;
+
+                // Group by day
+                const day = date.toLocaleDateString("en-US", {
+                    weekday: "long",
+                });
+                const dayIndex = days.indexOf(day);
+                if (dayIndex === -1) {
+                    days.push(day);
+                    dailyTweetCounts.push(trend.count);
+                } else {
+                    dailyTweetCounts[dayIndex] += trend.count;
+                }
+            });
+
+            // Update the data based on isDaily state
+            if (isDaily) {
+                setData({
+                    labels: days.length > 0 ? days : ["No Data"],
+                    datasets: [
+                        {
+                            label: "Daily Tweets",
+                            data: dailyTweetCounts,
+                            backgroundColor: "rgba(75, 192, 192, 0.2)",
+                            borderColor: "#4bc0c0",
+                            borderWidth: 2,
+                            pointBackgroundColor: "#4bc0c0",
+                            pointBorderColor: "#fff",
+                            pointHoverBackgroundColor: "#4bc0c0",
+                            pointHoverBorderColor: "#fff",
+                            fill: true,
+                        },
+                    ],
+                });
+            } else {
+                setData({
+                    labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
+                    datasets: [
+                        {
+                            label: "Hourly Tweets",
+                            data: hourlyTweetCounts,
+                            backgroundColor: "rgba(192, 75, 192, 0.2)",
+                            borderColor: "#c04bc0",
+                            borderWidth: 2,
+                            pointBackgroundColor: "#c04bc0",
+                            pointBorderColor: "#fff",
+                            pointHoverBackgroundColor: "#c04bc0",
+                            pointHoverBorderColor: "#fff",
+                            fill: true,
+                        },
+                    ],
+                });
+            }
+        }
+        if (isSet) {
+            getData();
+        }
+    }, [isSet, isDaily]);
+
+    const toggleView = () => setIsDaily((prev) => !prev);
 
     const options = {
         maintainAspectRatio: false,
@@ -69,18 +127,18 @@ const Overview = () => {
             y: {
                 beginAtZero: true,
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)',
+                    color: "rgba(255, 255, 255, 0.1)",
                 },
                 ticks: {
-                    color: '#fff',
+                    color: "#fff",
                 },
             },
             x: {
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)',
+                    color: "rgba(255, 255, 255, 0.1)",
                 },
                 ticks: {
-                    color: '#fff',
+                    color: "#fff",
                 },
             },
         },
@@ -88,7 +146,7 @@ const Overview = () => {
             legend: {
                 display: true,
                 labels: {
-                    color: '#fff',
+                    color: "#fff",
                 },
             },
         },
@@ -106,7 +164,6 @@ const Overview = () => {
                 <div className="stats">
                     <div className="stat">
                         <h3>Total Tweets</h3>
-
                         <div className="details">
                             <span>42,178</span>
                             <span>All Time</span>
@@ -114,7 +171,6 @@ const Overview = () => {
                     </div>
                     <div className="stat">
                         <h3>Relevant Tweets</h3>
-
                         <div className="details">
                             <span>29,140</span>
                             <span>Filtered</span>
@@ -122,7 +178,6 @@ const Overview = () => {
                     </div>
                     <div className="stat">
                         <h3>Tweets with Location</h3>
-
                         <div className="details">
                             <span>25,080</span>
                             <span>Geotagged</span>
@@ -130,6 +185,21 @@ const Overview = () => {
                     </div>
                 </div>
                 <div className="chart">
+                    <button
+                        onClick={toggleView}
+                        className="toggle-button"
+                        style={{
+                            marginBottom: "20px",
+                            padding: "5px 5px",
+                            backgroundColor: "#4bc0c0",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Switch to {isDaily ? "Hourly" : "Daily"}
+                    </button>
                     <Line data={data} options={options} />
                 </div>
             </div>
