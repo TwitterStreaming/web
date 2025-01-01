@@ -26,86 +26,100 @@ ChartJS.register(
 );
 
 const Overview = () => {
-    const { trends } = useTrends();
+    const { trends, setInterval } = useTrends();
 
-    const [isDaily, setIsDaily] = useState(true); 
+    const [isDaily, setIsDaily] = useState(true);
     const [data, setData] = useState({
         labels: [],
         datasets: [
             {
                 label: "Tweets Over Time",
                 data: [],
-                backgroundColor: "rgba(75, 192, 192, 0.2)",
-                borderColor: "#4bc0c0",
+                backgroundColor: "#4e5065",
+                borderColor: "#4e5065",
                 borderWidth: 2,
-                pointBackgroundColor: "#4bc0c0",
+                pointBackgroundColor: "rgb(255, 255, 255)",
                 pointBorderColor: "#fff",
-                pointHoverBackgroundColor: "#4bc0c0",
+                pointHoverBackgroundColor: "rgb(255, 255, 255)",
                 pointHoverBorderColor: "#fff",
                 fill: true,
             },
         ],
     });
+
     useEffect(() => {
         async function getData() {
-            const trendsData = trends.trends;
-
-            const hourlyTweetCounts = new Array(24).fill(0);
-            const dailyTweetCounts = [];
-            const days = [];
-
-            trendsData.forEach((trend) => {
-                const date = new Date(trend.date);
-                console.log(trend);
-
-                // Group by hour
-                const hour = date.getUTCHours();
-                hourlyTweetCounts[hour] += trend.count;
-
-                // Group by day
-                const day = date.toLocaleDateString("en-US", {
-                    weekday: "long",
-                });
-                const dayIndex = days.indexOf(day);
-                if (dayIndex === -1) {
-                    days.push(day);
-                    dailyTweetCounts.push(trend.count);
-                } else {
-                    dailyTweetCounts[dayIndex] += trend.count;
-                }
-            });
-
             if (isDaily) {
+                const dailyTweetCounts = [];
+                const dates = [];
+
+                trends.trends.forEach((trend) => {
+                    const date = new Date(trend.date);
+                    const formattedDate = date.toISOString().split("T")[0];
+
+                    const dateIndex = dates.indexOf(formattedDate);
+                    if (dateIndex === -1) {
+                        dates.push(formattedDate);
+                        dailyTweetCounts.push(trend.count);
+                    } else {
+                        dailyTweetCounts[dateIndex] += trend.count;
+                    }
+                });
+
                 setData({
-                    labels: days.length > 0 ? days : ["No Data"],
+                    labels: dates.length > 0 ? dates : ["No Data"],
                     datasets: [
                         {
                             label: "Daily Tweets",
                             data: dailyTweetCounts,
-                            backgroundColor: "rgba(75, 192, 192, 0.2)",
-                            borderColor: "#4bc0c0",
+                            backgroundColor: "#4e5065",
+                            borderColor: "#4e5065",
                             borderWidth: 2,
-                            pointBackgroundColor: "#4bc0c0",
+                            pointBackgroundColor: "rgb(255, 255, 255)",
                             pointBorderColor: "#fff",
-                            pointHoverBackgroundColor: "#4bc0c0",
+                            pointHoverBackgroundColor: "rgb(255, 255, 255)",
                             pointHoverBorderColor: "#fff",
                             fill: true,
                         },
                     ],
                 });
             } else {
+                const hourlyTweetCounts = new Array(24).fill(0);
+
+                trends.trends.forEach((trend) => {
+                    const date = new Date(trend.date);
+                    const hour = date.getHours();
+                    hourlyTweetCounts[hour] += trend.count;
+                });
+
+                const hourlyLabels = hourlyTweetCounts.map((_, hourIndex) => {
+                    const baseDate = new Date();
+                    baseDate.setHours(hourIndex);
+
+                    const options = {
+                        hour: "numeric",
+                        hour12: true,
+                    };
+
+                    const hourString = baseDate.toLocaleString(
+                        "en-US",
+                        options,
+                    );
+                    return `${hourString}`;
+                });
+
                 setData({
-                    labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
+                    labels: hourlyLabels,
                     datasets: [
                         {
                             label: "Hourly Tweets",
                             data: hourlyTweetCounts,
-                            backgroundColor: "rgba(192, 75, 192, 0.2)",
-                            borderColor: "#c04bc0",
+                            backgroundColor: "#4e5065",
+                            borderColor: "#4e5065",
                             borderWidth: 2,
-                            pointBackgroundColor: "#c04bc0",
+                            pointBackgroundColor: "rgb(255, 255, 255)",
                             pointBorderColor: "#fff",
-                            pointHoverBackgroundColor: "#c04bc0",
+                            pointHoverBackgroundColor: "rgb(255, 255, 255)",
                             pointHoverBorderColor: "#fff",
                             fill: true,
                         },
@@ -117,9 +131,13 @@ const Overview = () => {
         if (trends) {
             getData();
         }
-    }, [trends]);
+    }, [isDaily, trends]);
 
-    const toggleView = () => setIsDaily((prev) => !prev);
+    const toggleView = () => {
+        const newInterval = isDaily ? "1h" : "1d";
+        setIsDaily((prev) => !prev);
+        setInterval(newInterval);
+    };
 
     const options = {
         maintainAspectRatio: false,
@@ -177,7 +195,7 @@ const Overview = () => {
                         </div>
                     </div>
                     <div className="stat">
-                        <h3>Tweets with Location</h3>
+                        <h3>Tweets with no Location</h3>
                         <div className="details">
                             <span>25,080</span>
                             <span>Geotagged</span>

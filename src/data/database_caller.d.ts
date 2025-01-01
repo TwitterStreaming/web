@@ -36,7 +36,7 @@ export type TweetResponse = {
 export type TrendsResponse = {
     trends: {
         date: string;
-        count: number; 
+        count: number;
     }[];
 };
 
@@ -44,4 +44,4 @@ export declare async function getMostRelevantTweet(): Promise<MostRelevantTweet>
 export declare async function searchByKeyword(text: string): Promise<TweetResponse[]>;
 export declare async function searchByHashtag(hashtag: string): Promise<TweetResponse[]>;
 export declare async function getAllTweets(): Promise<TweetResponse[]>;
-export declare async function getTrendsTweetsOverTime(query: string):Promise<TrendsResponse>; 
+export declare async function getTrendsTweetsOverTime(query: string, interval: string): Promise<TrendsResponse>; 

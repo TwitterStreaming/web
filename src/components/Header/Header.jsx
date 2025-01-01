@@ -11,12 +11,12 @@ const Header = () => {
     const [searchText, setSearchText] = useState("");
     const { data, fetch: fetchSearchData } = useSearchByKeyword();
     const { fetch: fetchLocations } = useLocation();
-    const { fetch: fetchTrends } = useTrends();
+    const { intervalTime, fetch: fetchTrends } = useTrends();
 
     async function searchKeyword() {
         if (searchText !== "") {
             await fetchSearchData(searchText);
-            await fetchTrends(searchText);
+            await fetchTrends(searchText, intervalTime);
         }
     }
 
@@ -26,7 +26,11 @@ const Header = () => {
         }, 2000);
 
         return () => clearInterval(intervalId);
-    }, [searchText]);
+    }, [searchText, intervalTime]);
+
+    useEffect(() => {
+        searchKeyword();
+    }, [intervalTime]);
 
     useEffect(() => {
         if (data) {
