@@ -13,6 +13,9 @@ import {
 } from "chart.js";
 import "../../styles/TrendChartStyle.css";
 import { useTrends } from "../../context/useTrends";
+import { useTotalTweets } from "../../context/useTotalTweets";
+import { useTotalSearchedTweets } from "../../context/useTotalSearchedTweets";
+import { useTweetsNoLocation } from "../../context/useTweetsNoLocation";
 
 ChartJS.register(
     CategoryScale,
@@ -27,6 +30,10 @@ ChartJS.register(
 
 const Overview = () => {
     const { trends, setInterval } = useTrends();
+
+    const { totalTweets } = useTotalTweets();
+    const { totalSearchedTweets } = useTotalSearchedTweets();
+    const { totalNoLocation } = useTweetsNoLocation();
 
     const [isDaily, setIsDaily] = useState(true);
     const [data, setData] = useState({
@@ -183,21 +190,21 @@ const Overview = () => {
                     <div className="stat">
                         <h3>Total Tweets</h3>
                         <div className="details">
-                            <span>42,178</span>
+                            <span>{totalTweets}</span>
                             <span>All Time</span>
                         </div>
                     </div>
                     <div className="stat">
-                        <h3>Relevant Tweets</h3>
+                        <h3>Total Searched Tweets</h3>
                         <div className="details">
-                            <span>29,140</span>
+                            <span>{totalSearchedTweets}</span>
                             <span>Filtered</span>
                         </div>
                     </div>
                     <div className="stat">
                         <h3>Tweets with no Location</h3>
                         <div className="details">
-                            <span>25,080</span>
+                            <span>{totalNoLocation}</span>
                             <span>Geotagged</span>
                         </div>
                     </div>

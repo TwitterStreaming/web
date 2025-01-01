@@ -6,16 +6,26 @@ import { FaSearch } from "react-icons/fa";
 import { useSearchByKeyword } from "../../context/useSearchByKeyword";
 import { useLocation } from "../../context/useLocation";
 import { useTrends } from "../../context/useTrends";
+import { useTotalTweets } from "../../context/useTotalTweets";
+import { useTotalSearchedTweets } from "../../context/useTotalSearchedTweets";
+import { useTweetsNoLocation } from "../../context/useTweetsNoLocation";
 
 const Header = () => {
     const [searchText, setSearchText] = useState("");
     const { data, fetch: fetchSearchData } = useSearchByKeyword();
     const { fetch: fetchLocations } = useLocation();
     const { intervalTime, fetch: fetchTrends } = useTrends();
+    const { setTotalTweets } = useTotalTweets();
+    const { setTotalSearchedTweets } = useTotalSearchedTweets();
+    const { setTotalNoLocation } = useTweetsNoLocation();
 
     async function searchKeyword() {
         if (searchText !== "") {
-            await fetchSearchData(searchText);
+            await fetchSearchData(
+                searchText,
+                setTotalSearchedTweets,
+                setTotalNoLocation,
+            );
             await fetchTrends(searchText, intervalTime);
         }
     }
@@ -23,6 +33,7 @@ const Header = () => {
     useEffect(() => {
         const intervalId = setInterval(async () => {
             await searchKeyword();
+            await setTotalTweets();
         }, 2000);
 
         return () => clearInterval(intervalId);

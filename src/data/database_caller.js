@@ -39,17 +39,17 @@ export async function searchByHashtag(hashtag) {
     }
 }
 
-/** @returns {import("./database_caller").TweetResponse[]} */
+/** @returns {Promise<import("./database_caller").TweetResponse>} */
 export async function getAllTweets() {
     try {
-        const res = await axios.get("http://127.0.0.1:8000/api/all");
+        const res = await axios.get("http://127.0.0.1:8000/api/all/");
         return res.data;
     } catch (error) {
         console.error("Error fetching data:", error);
     }
 }
 
-/** @returns {import("./database_caller").TrendsResponse} */
+/** @returns {Promise<import("./database_caller").TrendsResponse>} */
 export async function getTrendsTweetsOverTime(query, interval) {
     try {
         const res = await axios.get(
@@ -59,4 +59,8 @@ export async function getTrendsTweetsOverTime(query, interval) {
     } catch (error) {
         console.error("Error fetching data:", error);
     }
+}
+
+export async function getTotalTweets() {
+    return (await getAllTweets()).total;
 }
