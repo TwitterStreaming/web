@@ -1,59 +1,113 @@
-import React, { useState, useEffect } from "react";
-import GaugeChart from "react-gauge-chart";
+import React from "react";
+import { useAverageSentiment } from "../../context/useSentimentAnalysis";
 
 const SentimentGaugeChart = () => {
-  const [sentimentScore, setSentimentScore] = useState(0.5); // Initial sentiment score (neutral)
+    const { averageSentiment } = useAverageSentiment();
 
-  // Simulate live sentiment score updates (mock data)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newScore = Math.random(); // Generate a random sentiment score between 0 and 1
-      setSentimentScore(newScore);
-    }, 3000); // Update every 3 seconds
+    const sentimentPolarity =
+        averageSentiment?.average_sentiment?.average_polarity || 0;
 
-    return () => clearInterval(interval);
-  }, []);
+    const getGaugeInfo = (polarity) => {
+        if (polarity > 0.1)
+            return {
+                label: "Positive",
+                color: "#4CAF50",
+                textColor: "#2E7D32",
+            };
+        if (polarity < -0.1)
+            return {
+                label: "Negative",
+                color: "#F44336",
+                textColor: "#C62828",
+            };
+        return {
+            label: "Neutral",
+            color: "#FFC107",
+            textColor: "#FF8F00",
+        };
+    };
 
-  return (
-    <div style={styles.card}>
-      <h3 style={styles.title}>Live Sentiment Analysis</h3>
-      <GaugeChart
-        id="sentiment-gauge-chart"
-        style={styles.chartStyle}
-        nrOfLevels={20}
-        arcsLength={[0.33, 0.33, 0.34]} // Dividing into 3 segments: Negative, Neutral, Positive
-        colors={["#FF0000", "#FFA500", "#4CAF50"]} // Red for Negative, Orange for Neutral, Green for Positive
-        percent={sentimentScore}
-        arcPadding={0.02}
-        textColor="black"
-        formatTextValue={(value) => {
-          const sentimentLabel = value < 0.33 ? "Negative" : value < 0.66 ? "Neutral" : "Positive";
-          return `${sentimentLabel} - ${(value * 100).toFixed(2)}%`;
-        }}
-      />
-    </div>
-  );
+    const { label, color, textColor } = getGaugeInfo(sentimentPolarity);
+    const percentage = ((sentimentPolarity + 1) / 2) * 100;
+
+    return (
+        <div style={styles.container}>
+            <div style={styles.title}>Sentiment Analysis</div>
+
+            <div style={styles.gauge}>
+                <div
+                    style={{
+                        ...styles.fill,
+                        width: `${percentage}%`,
+                        backgroundColor: color,
+                    }}
+                />
+                <div
+                    style={{
+                        ...styles.marker,
+                        left: `${percentage}%`,
+                    }}
+                />
+            </div>
+
+            <div style={{ ...styles.score, color: textColor }}>
+                {sentimentPolarity.toFixed(2)}
+            </div>
+            <div style={{ ...styles.label, color: textColor }}>{label}</div>
+        </div>
+    );
 };
 
 const styles = {
-  card: {
-    backgroundColor: "#e6e8fd", // Card background color
-    borderRadius: "8px", // Rounded corners
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Shadow for card
-    padding: "20px", // Padding inside the card
-    width: "100%", // Maximum width for the card
-    margin: "20px auto", // Center the card
-    textAlign: "center", // Align text inside the card
-    height: "100%",
-  },
-  title: {
-    margin: "0 0 20px", // Space between title and chart
-    fontSize: "18px", // Title font size
-    color: "#333", // Title color
-  },
-  chartStyle: {
-    height: 348, // Height for the chart
-  },
+    container: {
+        width: "auto",
+        padding: "20px",
+        backgroundColor: "#f5f5f5",
+        borderRadius: "10px",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+    },
+    title: {
+        fontSize: "24px",
+        fontWeight: "bold",
+        textAlign: "center",
+        marginBottom: "20px",
+        color: "#333",
+    },
+    gauge: {
+        width: "100%",
+        height: "60px",
+        backgroundColor: "#e0e0e0",
+        borderRadius: "30px",
+        position: "relative",
+        overflow: "hidden",
+    },
+    fill: {
+        height: "100%",
+        transition: "width 0.5s ease-in-out, background-color 0.5s ease-in-out",
+        borderRadius: "30px",
+    },
+    marker: {
+        position: "absolute",
+        width: "4px",
+        height: "20px",
+        backgroundColor: "#333",
+        top: "50%",
+        transform: "translateY(-50%)",
+        transition: "left 0.5s ease-in-out",
+    },
+    score: {
+        fontSize: "32px",
+        fontWeight: "bold",
+        textAlign: "center",
+        marginTop: "20px",
+    },
+    label: {
+        fontSize: "18px",
+        textAlign: "center",
+        marginTop: "10px",
+        textTransform: "uppercase",
+        letterSpacing: "1px",
+    },
 };
 
 export default SentimentGaugeChart;
