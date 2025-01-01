@@ -5,15 +5,18 @@ import profilePic from "../../Assets/money.png";
 import { FaSearch } from "react-icons/fa";
 import { useSearchByKeyword } from "../../context/useSearchByKeyword";
 import { useLocation } from "../../context/useLocation";
+import { useAverageSentiment } from "../../context/useSentimentAnalysis";
 
 const Header = () => {
     const [searchText, setSearchText] = useState("");
     const { data, fetch: fetchSearchData } = useSearchByKeyword();
     const { fetch: fetchLocations } = useLocation();
+    const { fetch: fetchAverageSentiment } = useAverageSentiment();
 
     async function searchKeyword() {
         if (searchText !== "") {
             await fetchSearchData(searchText);
+            await fetchAverageSentiment(searchText);
         }
     }
 
