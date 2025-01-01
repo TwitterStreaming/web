@@ -61,6 +61,19 @@ export async function getTrendsTweetsOverTime(query, interval) {
     }
 }
 
+/** @returns {import("./database_caller").SentimentAnalysisResponse} */
+export async function getAverageSentimentAnalysis(text) {
+    try {
+        const res = await axios.get(
+            `http://127.0.0.1:8000/api/sentiment/?q=${text}`,
+        );
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}
+
+
 export async function getTotalTweets() {
     return (await getAllTweets()).total;
 }

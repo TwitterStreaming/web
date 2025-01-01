@@ -9,6 +9,7 @@ import { useTrends } from "../../context/useTrends";
 import { useTotalTweets } from "../../context/useTotalTweets";
 import { useTotalSearchedTweets } from "../../context/useTotalSearchedTweets";
 import { useTweetsNoLocation } from "../../context/useTweetsNoLocation";
+import { useAverageSentiment } from "../../context/useSentimentAnalysis";
 
 const Header = () => {
     const [searchText, setSearchText] = useState("");
@@ -18,6 +19,7 @@ const Header = () => {
     const { setTotalTweets } = useTotalTweets();
     const { setTotalSearchedTweets } = useTotalSearchedTweets();
     const { setTotalNoLocation } = useTweetsNoLocation();
+    const { fetch: fetchAverageSentiment } = useAverageSentiment();
 
     async function searchKeyword() {
         if (searchText !== "") {
@@ -27,6 +29,7 @@ const Header = () => {
                 setTotalNoLocation,
             );
             await fetchTrends(searchText, intervalTime);
+            await fetchAverageSentiment(searchText);
         }
     }
 
