@@ -33,6 +33,13 @@ export type TweetResponse = {
     tweets: Tweet[];
 }
 
+export type TrendsResponse = {
+    trends: {
+        date: string;
+        count: number;
+    }[];
+};
+
 export type SentimentAnalysisResponse = {
     average_sentiment: {
         average_polarity: number;
@@ -41,7 +48,9 @@ export type SentimentAnalysisResponse = {
 }
 
 export declare async function getMostRelevantTweet(): Promise<MostRelevantTweet>;
-export declare async function searchByKeyword(text: string): Promise<TweetResponse[]>;
+export declare async function searchByKeyword(text: string): Promise<TweetResponse>;
 export declare async function searchByHashtag(hashtag: string): Promise<TweetResponse[]>;
-export declare async function getAllTweets(): Promise<TweetResponse[]>;
+export declare async function getAllTweets(): Promise<TweetResponse>;
+export declare async function getTrendsTweetsOverTime(query: string, interval: string): Promise<TrendsResponse>;
+export declare async function getTotalTweets(): Promise<number>
 export declare async function getAverageSentimentAnalysis(text: string): Promise<SentimentAnalysisResponse>;

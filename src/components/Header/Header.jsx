@@ -5,17 +5,30 @@ import profilePic from "../../Assets/money.png";
 import { FaSearch } from "react-icons/fa";
 import { useSearchByKeyword } from "../../context/useSearchByKeyword";
 import { useLocation } from "../../context/useLocation";
+import { useTrends } from "../../context/useTrends";
+import { useTotalTweets } from "../../context/useTotalTweets";
+import { useTotalSearchedTweets } from "../../context/useTotalSearchedTweets";
+import { useTweetsNoLocation } from "../../context/useTweetsNoLocation";
 import { useAverageSentiment } from "../../context/useSentimentAnalysis";
 
 const Header = () => {
     const [searchText, setSearchText] = useState("");
     const { data, fetch: fetchSearchData } = useSearchByKeyword();
     const { fetch: fetchLocations } = useLocation();
+    const { intervalTime, fetch: fetchTrends } = useTrends();
+    const { setTotalTweets } = useTotalTweets();
+    const { setTotalSearchedTweets } = useTotalSearchedTweets();
+    const { setTotalNoLocation } = useTweetsNoLocation();
     const { fetch: fetchAverageSentiment } = useAverageSentiment();
 
     async function searchKeyword() {
         if (searchText !== "") {
-            await fetchSearchData(searchText);
+            await fetchSearchData(
+                searchText,
+                setTotalSearchedTweets,
+                setTotalNoLocation,
+            );
+            await fetchTrends(searchText, intervalTime);
             await fetchAverageSentiment(searchText);
         }
     }
@@ -23,10 +36,15 @@ const Header = () => {
     useEffect(() => {
         const intervalId = setInterval(async () => {
             await searchKeyword();
+            await setTotalTweets();
         }, 2000);
 
         return () => clearInterval(intervalId);
-    }, [searchText]);
+    }, [searchText, intervalTime]);
+
+    useEffect(() => {
+        searchKeyword();
+    }, [intervalTime]);
 
     useEffect(() => {
         if (data) {
