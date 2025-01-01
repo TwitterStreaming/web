@@ -48,3 +48,15 @@ export async function getAllTweets() {
         console.error("Error fetching data:", error);
     }
 }
+
+/** @returns {import("./database_caller").SentimentAnalysisResponse} */
+export async function getAverageSentimentAnalysis(text) {
+    try {
+        const res = await axios.get(
+            `http://127.0.0.1:8000/api/sentiment/?q=${text}`,
+        );
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}

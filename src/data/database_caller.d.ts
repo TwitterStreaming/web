@@ -33,7 +33,15 @@ export type TweetResponse = {
     tweets: Tweet[];
 }
 
+export type SentimentAnalysisResponse = {
+    average_sentiment: {
+        average_polarity: number;
+        average_subjectivity: number;
+    }
+}
+
 export declare async function getMostRelevantTweet(): Promise<MostRelevantTweet>;
 export declare async function searchByKeyword(text: string): Promise<TweetResponse[]>;
 export declare async function searchByHashtag(hashtag: string): Promise<TweetResponse[]>;
 export declare async function getAllTweets(): Promise<TweetResponse[]>;
+export declare async function getAverageSentimentAnalysis(text: string): Promise<SentimentAnalysisResponse>;
