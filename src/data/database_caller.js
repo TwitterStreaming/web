@@ -75,5 +75,10 @@ export async function getAverageSentimentAnalysis(text) {
 
 
 export async function getTotalTweets() {
-    return (await getAllTweets()).total;
+    try {
+        const res = await axios.get("http://127.0.0.1:8000/api/doc_count/");
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
 }
