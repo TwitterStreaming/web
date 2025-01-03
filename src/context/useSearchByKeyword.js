@@ -10,7 +10,7 @@ export const useSearchByKeyword = create((set) => ({
 
         let totalNoLocation = 0;
 
-        data.tweets.forEach((tweet) => {
+        data?.tweets?.forEach((tweet) => {
             if (tweet._source.geo_coordinates.lat === undefined) {
                 totalNoLocation++;
             }
