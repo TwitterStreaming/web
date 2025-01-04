@@ -143,7 +143,12 @@ const Search = () => {
                         border: "1px solid rgb(204, 204, 204)",
                         borderRadius: "4px",
                         backgroundColor: "rgb(249, 249, 249)",
-                        width: "200px",
+                        width:
+                            query.length > 13
+                                ? "400px"
+                                : query.length > 9
+                                  ? "300px"
+                                  : "200px",
                         marginLeft: "auto",
                         marginRight: "auto",
                     }}
