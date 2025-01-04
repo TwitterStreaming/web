@@ -6,11 +6,11 @@ export const useSearchByKeyword = create((set) => ({
     setSearchedData: (data) => set({ data: data }),
     fetch: async (keyword, setAllSearchedTweets, setTotalNoLocation) => {
         const data = await searchByKeyword(keyword);
-        setAllSearchedTweets(data.total);
+        setAllSearchedTweets(data?.total);
 
         let totalNoLocation = 0;
 
-        data.tweets.forEach((tweet) => {
+        data?.tweets?.forEach((tweet) => {
             if (tweet._source.geo_coordinates.lat === undefined) {
                 totalNoLocation++;
             }

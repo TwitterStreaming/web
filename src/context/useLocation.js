@@ -4,7 +4,6 @@ import { extractLocation } from "../utils/extract_data";
 export const useLocation = create((set) => ({
     locations: [],
     fetch: (tweet) => {
-        console.log(tweet.tweets.length);
         return set({ locations: extractLocation(tweet) });
     },
     setLocations: (locations) => set({ locations }),

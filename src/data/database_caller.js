@@ -73,10 +73,31 @@ export async function getAverageSentimentAnalysis(text) {
     }
 }
 
-
 export async function getTotalTweets() {
     try {
         const res = await axios.get("http://127.0.0.1:8000/api/doc_count/");
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}
+
+export async function getHashtagCount(query) {
+    try {
+        const res = await axios.get(
+            `http://localhost:8000/api/hashtag_count/?q=%23${encodeURIComponent(query)}`,
+        );
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}
+
+export async function searchHashtag(value) {
+    try {
+        const res = await axios.get(
+            `http://localhost:8000/api/hatag_search/?q=${value}`,
+        );
         return res.data;
     } catch (error) {
         console.error("Error fetching data:", error);
