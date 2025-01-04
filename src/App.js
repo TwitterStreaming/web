@@ -19,7 +19,6 @@ function App() {
                     <div className="column-charts">
                         <Map />
                     </div>
-                   
                 </div>
                 <Search />
             </div>
