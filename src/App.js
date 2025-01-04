@@ -4,6 +4,7 @@ import Map from "./components/Map/Map";
 import TrendChart from "./components/TrendChart/TrendChart";
 import Header from "./components/Header/Header";
 import SentimentGaugeChart from "./components/SentimentGaugeChart/SentimentGaugeChart";
+import Search from "./components/AutoCompletionSearch/Search";
 
 function App() {
     return (
@@ -18,7 +19,9 @@ function App() {
                     <div className="column-charts">
                         <Map />
                     </div>
+                   
                 </div>
+                <Search />
             </div>
         </div>
     );
