@@ -6,7 +6,7 @@ export const useSearchByKeyword = create((set) => ({
     setSearchedData: (data) => set({ data: data }),
     fetch: async (keyword, setAllSearchedTweets, setTotalNoLocation) => {
         const data = await searchByKeyword(keyword);
-        setAllSearchedTweets(data?.total);
+        setAllSearchedTweets(data?.total || 0);
 
         let totalNoLocation = 0;
 
